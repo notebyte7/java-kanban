@@ -1,4 +1,5 @@
 package ru.yandex.practicum.kanban;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -10,7 +11,7 @@ public class Epic extends Task {
     }
 
     @Override
-    public boolean equals (Object obj){
+    public boolean equals(Object obj) {
         if (this == obj) return true; // проверяем адреса объектов
         if (obj == null) return false; // проверяем ссылку на null
         if (this.getClass() != obj.getClass()) return false; // сравниваем классы
@@ -26,20 +27,20 @@ public class Epic extends Task {
     public int hashCode() {
         int hash = 17;
         if (name != null) {
-            hash +=  name.hashCode();
+            hash += name.hashCode();
         }
-        hash *=  31;
+        hash *= 31;
         if (description != null) {
             hash += description.hashCode();
         }
-        hash *=  17;
+        hash *= 17;
         hash += id;
         if (status != null) {
-            hash +=  status.hashCode();
+            hash += status.hashCode();
         }
-        hash *=  13;
+        hash *= 13;
         if (subtaskIds != null) {
-            hash +=  subtaskIds.hashCode();
+            hash += subtaskIds.hashCode();
         }
         return hash;
     }
