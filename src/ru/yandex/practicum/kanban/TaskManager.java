@@ -10,17 +10,26 @@ import java.util.HashMap;
 
 public class TaskManager {
     private static int uid;
-    HashMap<Integer, Task> tasksHashMap = new HashMap<>();
-    HashMap<Integer, Epic> epicsHashMap = new HashMap<>();
-    HashMap<Integer, Subtask> subtasksHashMap = new HashMap<>();
+    private HashMap<Integer, Task> tasksHashMap = new HashMap<>();
+    private HashMap<Integer, Epic> epicsHashMap = new HashMap<>();
+    private HashMap<Integer, Subtask> subtasksHashMap = new HashMap<>();
 
-    public static int getUid() {
-        return uid;
+    public HashMap<Integer, Task> getTasksHashMap() {
+        return tasksHashMap;
+    }
+
+    public HashMap<Integer, Epic> getEpicsHashMap() {
+        return epicsHashMap;
+    }
+
+    public HashMap<Integer, Subtask> getSubtasksHashMap() {
+        return subtasksHashMap;
     }
 
     // Для тасков
     public void createTask(Task task) {  //создание Таска
         final int id = uid++;
+        task.setId(id);
         tasksHashMap.put(id, task);
     }
 
@@ -47,6 +56,7 @@ public class TaskManager {
     // Для Эпиков
     public void createEpic(Epic epic) { //создание Эпика
         final int id = uid++;
+        epic.setId(id);
         epic.setStatus(getEpicStatus(epic)); //проверка и обновление статуса эпика при его создании
         epicsHashMap.put(id, epic);
     }
@@ -109,6 +119,7 @@ public class TaskManager {
     // Для Сабтасков
     public void createSubtask(Subtask subtask) { //создание Сабтаска
         final int id = uid++;
+        subtask.setId(id);
         subtasksHashMap.put(id, subtask);
         epicsHashMap.get(subtask.getEpicId()).getSubtaskIds().add(id);
         epicsHashMap.get(subtask.getEpicId()).setStatus(getEpicStatus(epicsHashMap.get(subtask.getEpicId())));
