@@ -107,7 +107,9 @@ public class TaskManager {
                 status = Status.NEW;
             } else if (m == 1) {
                 status = Status.DONE;
-            } else status = Status.IN_PROGRESS;
+            } else {
+                status = Status.IN_PROGRESS;
+            }
         }
         return status;
     }
@@ -115,10 +117,9 @@ public class TaskManager {
     // Для Сабтасков
     public void createSubtask(Subtask subtask) { //создание Сабтаска
         final int id = uid++;
-        Epic epic;
         subtask.setId(id);
         subtasksHashMap.put(id, subtask);
-        epic = epicsHashMap.get(subtask.getEpicId());
+        Epic epic = epicsHashMap.get(subtask.getEpicId());
         epic.getSubtaskIds().add(id);
         epic.setStatus(getEpicStatus(epic));
     }
@@ -141,8 +142,7 @@ public class TaskManager {
 
     public void updateSubtask(Subtask subtask) {
         subtasksHashMap.put(subtask.getId(), subtask);
-        Epic epic;
-        epic = epicsHashMap.get(subtask.getEpicId());
+        Epic epic = epicsHashMap.get(subtask.getEpicId());
         epic.setStatus(getEpicStatus(epic));
         //проверка и изменение статуса при обновлении сабтаска
     }
@@ -150,8 +150,7 @@ public class TaskManager {
     public void removeSubtask(int id) {
         int epicId = subtasksHashMap.get(id).getEpicId();
         subtasksHashMap.remove(id);
-        Epic epic;
-        epic = epicsHashMap.get(epicId);
+        Epic epic = epicsHashMap.get(epicId);
         epic.getSubtaskIds().remove(Integer.valueOf(id));
         epic.setStatus(getEpicStatus(epic));
         //проверка и изменение статуса при удалении сабтаска
