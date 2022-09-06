@@ -1,16 +1,16 @@
 package ru.yandex.practicum.kanban;
 
+import ru.yandex.practicum.kanban.manager.Managers;
+import ru.yandex.practicum.kanban.manager.TaskManager;
 import ru.yandex.practicum.kanban.tasks.Status;
 import ru.yandex.practicum.kanban.tasks.Task;
 import ru.yandex.practicum.kanban.tasks.Epic;
 import ru.yandex.practicum.kanban.tasks.Subtask;
 
-import java.util.ArrayList;
-
 public class Main {
     public static void main(String[] args) {
         //Проверка по условиям из задания
-        TaskManager taskManager = new TaskManager();
+        TaskManager taskManager = Managers.getDefault();
 
         taskManager.createTask(new Task("Задача0", "Описание0", Status.NEW));
         taskManager.createTask(new Task("Задача1", "Описание1", Status.NEW));
@@ -39,9 +39,24 @@ public class Main {
         System.out.println("\n" + taskManager.getTaskList() + "\n" + taskManager.getEpicList() +
                 "\n" + taskManager.getSubtaskList());
 
-        taskManager.removeAllSubtasks();
-
-        System.out.println("\n" + taskManager.getTaskList() + "\n" + taskManager.getEpicList() +
-                "\n" + taskManager.getSubtaskList());
+        taskManager.getTask(0);
+        taskManager.getTask(1);
+        taskManager.getEpic(2);
+        taskManager.getTask(1);
+        taskManager.getSubtask(3);
+        taskManager.getTask(0);
+        taskManager.getTask(1);
+        taskManager.getEpic(2);
+        taskManager.getTask(1);
+        taskManager.getSubtask(3);
+        System.out.println("\n" + "getHistory" + "\n" + taskManager.getHistory());
+        taskManager.getEpic(2);
+        System.out.println("\n" + "getHistory" + "\n" + taskManager.getHistory());
+        taskManager.getTask(1);
+        System.out.println("\n" + "getHistory" + "\n" + taskManager.getHistory());
+        taskManager.getEpic(2);
+        System.out.println("\n" + "getHistory" + "\n" + taskManager.getHistory());
+        taskManager.getSubtask(3);
+        System.out.println("\n" + "getHistory" + "\n" + taskManager.getHistory());
     }
 }
