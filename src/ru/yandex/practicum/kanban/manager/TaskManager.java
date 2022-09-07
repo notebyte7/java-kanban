@@ -12,7 +12,7 @@ public interface TaskManager {
     // Для тасков
     void createTask(Task task);
 
-    ArrayList<Task> getTaskList();
+    List<Task> getTaskList();
 
     void removeAllTasks();
 
@@ -25,7 +25,7 @@ public interface TaskManager {
     // Для Эпиков
     void createEpic(Epic epic);
 
-    ArrayList<Epic> getEpicList();
+    List<Epic> getEpicList();
 
     void removeAllEpics();
 
@@ -35,12 +35,12 @@ public interface TaskManager {
 
     void removeEpic(int id);
 
-    ArrayList<Subtask> getEpicSubtaskList(int id);
+    List<Subtask> getEpicSubtaskList(int id);
 
     // Для Сабтасков
     void createSubtask(Subtask subtask);
 
-    ArrayList<Subtask> getSubtaskList();
+    List<Subtask> getSubtaskList();
 
     void removeAllSubtasks();
 

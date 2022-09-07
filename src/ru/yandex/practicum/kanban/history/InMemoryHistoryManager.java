@@ -7,7 +7,7 @@ import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
     //История просмотров
-    private List<Task> history = new ArrayList<>();
+    private final List<Task> history = new ArrayList<>();
 
     public void add(Task task) {
         while (history.size() >= 10) {

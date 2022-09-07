@@ -1,7 +1,7 @@
 package ru.yandex.practicum.kanban.tasks;
 
 public class Subtask extends Task {
-    private int epicId;
+    private final int epicId;
 
     public int getEpicId() {
         return epicId;
