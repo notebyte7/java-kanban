@@ -58,6 +58,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeTask(int id) { //удаление по идентификатору
         tasksHashMap.remove(id);
+        historyManager.remove(id);
     }
 
     // Для Эпиков
@@ -98,8 +99,11 @@ public class InMemoryTaskManager implements TaskManager {
         ArrayList<Integer> subtasksId = new ArrayList<>(epicsHashMap.get(id).getSubtaskIds());
         epicsHashMap.remove(id);
         for (Integer subtaskId : subtasksId) {
-            subtasksHashMap.remove(subtaskId); //удаление всех сабтасков удаленного эпика
+            subtasksHashMap.remove(subtaskId);
+            historyManager.remove(subtaskId);
+            //удаление всех сабтасков удаленного эпика
         }
+        historyManager.remove(id);
     }
 
     @Override
@@ -190,6 +194,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.getSubtaskIds().remove(Integer.valueOf(id));
         epic.setStatus(getEpicStatus(epic));
         //проверка и изменение статуса при удалении сабтаска
+        historyManager.remove(id);
     }
 }
 
