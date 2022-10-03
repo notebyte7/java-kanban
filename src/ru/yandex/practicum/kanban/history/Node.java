@@ -1,6 +1,6 @@
 package ru.yandex.practicum.kanban.history;
 
-public class Node<Task> {
+class Node<Task> {
     public Task data;
     public Node<Task> next;
     public Node<Task> prev;

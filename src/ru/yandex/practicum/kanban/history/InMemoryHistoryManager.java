@@ -31,10 +31,10 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     public ArrayList<Task> getHistory() {
-        return new ArrayList<>(historyList.getTasks());
+        return historyList.getTasks();
     }
 
-    public class CustomLinkedList<T> {
+    private class CustomLinkedList<T> {
         private final Map<Integer, Node<Task>> tasksHistory = new HashMap<>();
 
         private Map<Integer, Node<Task>> getTasksHistory() {
@@ -58,7 +58,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             size++;
         }
 
-        public List<Task> getTasks() {
+        public ArrayList<Task> getTasks() {
             ArrayList<Task> history = new ArrayList<>();
             Node<Task> currentNode = head;
             while (currentNode != null) {
@@ -69,7 +69,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
 
         private void removeNode(Node<Task> node) {
-            switch (size) {
+            /*switch (size) {
                 case 0:
                     break;
                 case 1:
@@ -90,6 +90,22 @@ public class InMemoryHistoryManager implements HistoryManager {
                     }
             }
             tasksHistory.remove(node.data.getId());
+            size--;
+            */
+            if (head == null || tail == null || node == null) {
+            } else if ((node.prev == null) && (node.next == null)) {
+                head = null;
+                tail = null;
+            } else if (node.prev == null) {
+                node.next.prev = null;
+                head = node.next;
+            } else if (node.next == null) {
+                node.prev.next = null;
+                tail = node.prev;
+            } else {
+                node.prev.next = node.next;
+                node.next.prev = node.prev;
+            }
         }
     }
 
