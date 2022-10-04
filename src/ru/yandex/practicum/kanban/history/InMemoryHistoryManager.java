@@ -30,6 +30,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
+    @Override
     public ArrayList<Task> getHistory() {
         return historyList.getTasks();
     }
@@ -69,42 +70,20 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
 
         private void removeNode(Node<Task> node) {
-            /*switch (size) {
-                case 0:
-                    break;
-                case 1:
+            if (head != null && tail != null && node != null) {
+                if ((node.prev == null) && (node.next == null)) {
                     head = null;
                     tail = null;
-                    break;
-                default:
-                    if (node.prev == null) {
-                        head = node.next;
-                        node.next.prev = null;
-                    } else if (node.next == null) {
-                        node.prev.next = null;
-                        tail = node.prev;
-                    } else {
-                        node.prev.next = node.next;
-                        node.next.prev = node.prev;
-                        break;
-                    }
-            }
-            tasksHistory.remove(node.data.getId());
-            size--;
-            */
-            if (head == null || tail == null || node == null) {
-            } else if ((node.prev == null) && (node.next == null)) {
-                head = null;
-                tail = null;
-            } else if (node.prev == null) {
-                node.next.prev = null;
-                head = node.next;
-            } else if (node.next == null) {
-                node.prev.next = null;
-                tail = node.prev;
-            } else {
-                node.prev.next = node.next;
-                node.next.prev = node.prev;
+                } else if (node.prev == null) {
+                    node.next.prev = null;
+                    head = node.next;
+                } else if (node.next == null) {
+                    node.prev.next = null;
+                    tail = node.prev;
+                } else {
+                    node.prev.next = node.next;
+                    node.next.prev = node.prev;
+                }
             }
         }
     }
