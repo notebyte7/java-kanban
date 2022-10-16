@@ -1,10 +1,15 @@
 package ru.yandex.practicum.kanban.tasks;
 
 public class Task {
-    private String name;
-    private String description;
+    private final String name;
+    private final String description;
     private int id;
     private Status status;
+    private final TaskType type = TaskType.TASK;
+
+    public TaskType getType() {
+        return type;
+    }
 
     public String getName() {
         return name;
@@ -45,12 +50,8 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", id=" + id +
-                ", status='" + status + '\'' +
-                '}';
+        return id + "," + type + "," + name + "," + status +
+                "," + description + ",";
     }
 }
 

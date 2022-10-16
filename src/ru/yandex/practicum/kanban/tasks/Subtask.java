@@ -2,6 +2,11 @@ package ru.yandex.practicum.kanban.tasks;
 
 public class Subtask extends Task {
     private final int epicId;
+    private final TaskType type = TaskType.SUBTASK;
+
+    public TaskType getType() {
+        return type;
+    }
 
     public int getEpicId() {
         return epicId;
@@ -19,13 +24,8 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "Subtask{" +
-                "name='" + getName() + '\'' +
-                ", description='" + getDescription() + '\'' +
-                ", id=" + getId() +
-                ", status='" + getStatus() + '\'' +
-                ", epicId=" + epicId +
-                '}';
+        return getId() + "," + type + "," + getName() + "," + getStatus() +
+                "," + getDescription() + "," + getEpicId();
     }
 }
 

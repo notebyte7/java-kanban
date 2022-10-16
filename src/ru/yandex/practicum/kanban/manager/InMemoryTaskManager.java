@@ -17,19 +17,28 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Epic> epicsHashMap = new HashMap<>();
     private final HashMap<Integer, Subtask> subtasksHashMap = new HashMap<>();
 
-    HistoryManager historyManager = Managers.getDefaultHistory();
+    private HistoryManager historyManager = Managers.getDefaultHistory();
+
+    public HistoryManager getHistoryManager() {
+        return historyManager;
+    }
 
     @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
     }
 
-
     // Для тасков
     @Override
     public void createTask(Task task) {  //создание Таска
-        final int id = uid++;
-        task.setId(id);
+        final int id;
+        if (task.getId() != 0) {
+            id = task.getId();
+            uid = id;
+        } else {
+            id = ++uid;
+            task.setId(id);
+        }
         tasksHashMap.put(id, task);
     }
 
@@ -64,8 +73,14 @@ public class InMemoryTaskManager implements TaskManager {
     // Для Эпиков
     @Override
     public void createEpic(Epic epic) { //создание Эпика
-        final int id = uid++;
-        epic.setId(id);
+        final int id;
+        if (epic.getId() != 0) {
+            id = epic.getId();
+            uid = id;
+        } else {
+            id = ++uid;
+            epic.setId(id);
+        }
         epic.setStatus(getEpicStatus(epic)); //проверка и обновление статуса эпика при его создании
         epicsHashMap.put(id, epic);
     }
@@ -149,12 +164,23 @@ public class InMemoryTaskManager implements TaskManager {
     // Для Сабтасков
     @Override
     public void createSubtask(Subtask subtask) { //создание Сабтаска
-        final int id = uid++;
-        subtask.setId(id);
+        final int id;
+        if (subtask.getId() != 0) {
+            id = subtask.getId();
+            uid = id;
+        } else {
+            id = ++uid;
+            subtask.setId(id);
+        }
         subtasksHashMap.put(id, subtask);
         Epic epic = epicsHashMap.get(subtask.getEpicId());
-        epic.getSubtaskIds().add(id);
-        epic.setStatus(getEpicStatus(epic));
+        try {
+            epic.getSubtaskIds().add(id);
+            epic.setStatus(getEpicStatus(epic));
+        } catch (NullPointerException e) {
+            System.out.println("Внимание: epicID у сабтаска(id = " + id + ") не соответствует ID эпика");
+        }
+
     }
 
     @Override
