@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Epic extends Task {
+
     private final TaskType type = TaskType.EPIC;
 
     public TaskType getType() {
-        return type;
+        return TaskType.EPIC;
     }
 
     private final List<Integer> subtaskIds = new ArrayList<>();

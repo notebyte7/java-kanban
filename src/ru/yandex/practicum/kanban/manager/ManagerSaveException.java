@@ -1,4 +1,14 @@
 package ru.yandex.practicum.kanban.manager;
 
-public class ManagerSaveException extends Exception {
+import java.io.IOException;
+
+public class ManagerSaveException extends RuntimeException {
+
+    public ManagerSaveException(IOException e) {
+        e.getMessage();
+    }
+
+    public ManagerSaveException() {
+
+    }
 }

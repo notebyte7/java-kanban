@@ -4,8 +4,9 @@ public class Subtask extends Task {
     private final int epicId;
     private final TaskType type = TaskType.SUBTASK;
 
+    @Override
     public TaskType getType() {
-        return type;
+        return TaskType.SUBTASK;
     }
 
     public int getEpicId() {

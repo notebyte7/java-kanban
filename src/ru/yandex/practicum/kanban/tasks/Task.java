@@ -8,7 +8,7 @@ public class Task {
     private final TaskType type = TaskType.TASK;
 
     public TaskType getType() {
-        return type;
+        return TaskType.TASK;
     }
 
     public String getName() {
