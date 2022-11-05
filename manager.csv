@@ -1,11 +1,3 @@
-id,type,name,status,description,epic
-1,TASK,Task1,NEW,Description task1,
-4,TASK,Task4,NEW,Description task4,
-2,EPIC,Epic2,DONE,Description epic2,
-5,EPIC,Epic5,DONE,Description epic5,
-7,EPIC,Epic5,NEW,Description epic7,
-3,SUBTASK,Sub Task3,DONE,Description sub task3,2
-6,SUBTASK,Sub Task6,DONE,Description sub task6,5
-8,SUBTASK,Sub Task6,NEW,Description sub task8,7
+id,type,name,status,description,startTime,duration,epic
+19,TASK,Test addNewTask,NEW,Test addNewTask description,,,
 
-1,2,3,4,5,

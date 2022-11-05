@@ -1,15 +1,15 @@
 package ru.yandex.practicum.kanban.manager;
 
-import ru.yandex.practicum.kanban.tasks.Epic;
-import ru.yandex.practicum.kanban.tasks.Subtask;
-import ru.yandex.practicum.kanban.tasks.Task;
+
+import ru.yandex.practicum.kanban.tasks.*;
 
 import java.util.List;
+import java.util.Set;
 
 public interface TaskManager {
 
     // Для тасков
-    void createTask(Task task);
+    int createTask(Task task);
 
     List<Task> getTaskList();
 
@@ -22,7 +22,7 @@ public interface TaskManager {
     void removeTask(int id);
 
     // Для Эпиков
-    void createEpic(Epic epic);
+    int createEpic(Epic epic);
 
     List<Epic> getEpicList();
 
@@ -36,8 +36,11 @@ public interface TaskManager {
 
     List<Subtask> getEpicSubtaskList(int id);
 
+    Status getEpicStatus(int id);
+
+
     // Для Сабтасков
-    void createSubtask(Subtask subtask);
+    int createSubtask(Subtask subtask);
 
     List<Subtask> getSubtaskList();
 
@@ -49,6 +52,5 @@ public interface TaskManager {
 
     void removeSubtask(int id);
 
-    List<Task> getHistory();
-
+    Set<Task> getPrioritizedTasks();
 }

@@ -6,52 +6,16 @@ import ru.yandex.practicum.kanban.tasks.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.io.BufferedWriter;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final Map<Integer, Task> tempTasksMap = new HashMap<>();
 
-    public static void main(String[] args) throws ManagerSaveException {
-        //Менеджер 1
-        FileBackedTasksManager manager1 = new FileBackedTasksManager();
-        manager1.fromString("1,TASK,Task1,NEW,Description task1,");
-        manager1.fromString("2,EPIC,Epic2,DONE,Description epic2,");
-        manager1.fromString("3,SUBTASK,Sub Task3,DONE,Description sub task3,2");
-        manager1.fromString("4,TASK,Task4,NEW,Description task4,");
-        manager1.fromString("5,EPIC,Epic5,DONE,Description epic5,");
-        manager1.fromString("6,SUBTASK,Sub Task6,DONE,Description sub task6,5");
-        manager1.fromString("7,EPIC,Epic5,NEW,Description epic7,");
-        manager1.fromString("8,SUBTASK,Sub Task6,NEW,Description sub task8,7");
-        System.out.println("Менеджер 1");
-        System.out.println(manager1.getTaskList());
-        System.out.println(manager1.getEpicList());
-        System.out.println(manager1.getSubtaskList());
-        manager1.getTask(1);
-        manager1.getEpic(2);
-        manager1.getSubtask(3);
-        System.out.println("Менеджер 1 - история");
-        System.out.println(manager1.getHistory());
-
-        //Менеджер 2
-        FileBackedTasksManager manager = loadFromFile(new File("manager.csv"));
-        System.out.println("\nМенеджер 2");
-        System.out.println(manager.getTaskList());
-        System.out.println(manager.getEpicList());
-        System.out.println(manager.getSubtaskList());
-        System.out.println("Менеджер 2 - история");
-        System.out.println(manager.getHistory());
-        manager.getTask(4);
-        manager.getEpic(5);
-        System.out.println("Менеджер 2 - история");
-        System.out.println(manager.getHistory());
-
-
-    }
-
-    private void save(String path) {
+    public void save(String path) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
-            writer.write("id,type,name,status,description,epic");
+            writer.write("id,type,name,status,description,startTime,duration,epic");
             for (Task task : getTaskList()) {
                 writer.write("\n" + task.toString());
             }
@@ -73,16 +37,20 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             String content = Files.readString(Path.of(file.toURI()));
             lines = Arrays.asList(content.split("\n"));
-            int i = 1;
-            while (!lines.get(i).equals("")) {
-                manager.fromString(lines.get(i));
-                i++;
+            if (lines.size() > 1) {
+                for (int i = 1; i < lines.size(); i++) {
+                    if (!lines.get(i).equals("")) {
+                        manager.fromString(lines.get(i));
+                    } else {
+                        if (i + 1 < lines.size()) {
+                            List<Integer> history = manager.historyFromString(lines.get(i + 1));
+                            for (Integer id : history) {
+                                manager.getHistoryManager().add(manager.tempTasksMap.get(id));
+                            }
+                        }
+                    }
+                }
             }
-            List<Integer> history = manager.historyFromString(lines.get(i + 1));
-            for (Integer id : history) {
-                manager.getHistoryManager().add(manager.tempTasksMap.get(id));
-            }
-
         } catch (IOException e) {
             throw new ManagerSaveException(e);
         }
@@ -95,23 +63,25 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
         switch (TaskType.valueOf(value[1])) {
             case TASK:
-                task = new Task(value[2], value[4], Integer.parseInt(value[0]), Status.valueOf(value[3]));
+                task = new Task(value[2], value[4], Integer.parseInt(value[0]), Status.valueOf(value[3]),
+                        LocalDateTime.parse(value[5]), Integer.parseInt(value[6]));
                 super.createTask(task);
                 tempTasksMap.put(Integer.parseInt(value[0]), task);
-                break;
+                return task;
             case EPIC:
-                task = new Epic(value[2], value[4], Integer.parseInt(value[0]), Status.valueOf(value[3]));
+                task = new Epic(value[2], value[4], Integer.parseInt(value[0]), Status.valueOf(value[3]),
+                        LocalDateTime.parse(value[5]), Integer.parseInt(value[6]));
                 super.createEpic((Epic) task);
                 tempTasksMap.put(Integer.parseInt(value[0]), task);
                 break;
             case SUBTASK:
                 task = new Subtask(value[2], value[4], Integer.parseInt(value[0]),
-                        Status.valueOf(value[3]), Integer.parseInt(value[5]));
+                        Status.valueOf(value[3]), LocalDateTime.parse(value[5]), Integer.parseInt(value[6]),
+                        Integer.parseInt(value[7]));
                 super.createSubtask((Subtask) task);
                 tempTasksMap.put(Integer.parseInt(value[0]), task);
                 break;
         }
-
         return task;
     }
 
@@ -142,9 +112,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     // Для тасков
     @Override
-    public void createTask(Task task) {  //создание Таска
-        super.createTask(task);
+    public int createTask(Task task) {  //создание Таска
+        final int id = super.createTask(task);
         save("manager.csv");
+        return id;
     }
 
     @Override
@@ -182,9 +153,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     // Для Эпиков
     @Override
-    public void createEpic(Epic epic) { //создание Эпика
-        super.createEpic(epic);
+    public int createEpic(Epic epic) { //создание Эпика
+        int id = super.createEpic(epic);
         save("manager.csv");
+        return id;
     }
 
     @Override
@@ -226,9 +198,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     // Для Сабтасков
     @Override
-    public void createSubtask(Subtask subtask) { //создание Сабтаска
-        super.createSubtask(subtask);
+    public int createSubtask(Subtask subtask) { //создание Сабтаска
+        int id = super.createSubtask(subtask);
         save("manager.csv");
+        return id;
     }
 
     @Override
