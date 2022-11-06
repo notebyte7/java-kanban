@@ -51,12 +51,14 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public boolean isCrossing(Task newTask) {
-        for (Task prioritizedTask : getPrioritizedTasks()) {
-            if (!(newTask.getEndTime().isBefore(prioritizedTask.getStartTime()) ||
-                    (newTask.getEndTime().isEqual(prioritizedTask.getStartTime())) ||
-                    (newTask.getStartTime().isEqual(prioritizedTask.getEndTime())) ||
-                    (newTask.getStartTime().isAfter(prioritizedTask.getEndTime())))) {
-                return true;
+        if (newTask.getStartTime() != null) {
+            for (Task prioritizedTask : getPrioritizedTasks()) {
+                if (!(newTask.getEndTime().isBefore(prioritizedTask.getStartTime()) ||
+                        (newTask.getEndTime().isEqual(prioritizedTask.getStartTime())) ||
+                        (newTask.getStartTime().isEqual(prioritizedTask.getEndTime())) ||
+                        (newTask.getStartTime().isAfter(prioritizedTask.getEndTime())))) {
+                    return true;
+                }
             }
         }
         return false;
