@@ -8,7 +8,6 @@ public class Task {
     private final String description;
     private int id = 0;
     private Status status;
-    private final TaskType type = TaskType.TASK;
 
     private LocalDateTime startTime = null;
     private int duration;
@@ -94,27 +93,29 @@ public class Task {
     @Override
     public String toString() {
         if (getStartTime() != null) {
-            return id + "," + type + "," + name + "," + status +
+            return id + "," + getType() + "," + name + "," + status +
                     "," + description + "," + getStartTime() + "," + duration + ",";
         } else {
-            return id + "," + type + "," + name + "," + status +
+            return id + "," + getType() + "," + name + "," + status +
                     "," + description + "," + "," + ",";
         }
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o) {
+            return true;
+        }
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
         return id == task.id && duration == task.duration && name.equals(task.name) &&
-                description.equals(task.description) && status == task.status && type == task.type
-                && Objects.equals(startTime, task.startTime);
+                description.equals(task.description) && status == task.status &&
+                Objects.equals(startTime, task.startTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, id, status, type, startTime, duration);
+        return Objects.hash(name, description, id, status, startTime, duration);
     }
 }
 

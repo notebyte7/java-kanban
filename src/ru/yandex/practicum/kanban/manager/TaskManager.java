@@ -53,4 +53,6 @@ public interface TaskManager {
     void removeSubtask(int id);
 
     Set<Task> getPrioritizedTasks();
+
+    void save(String path);
 }

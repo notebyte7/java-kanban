@@ -10,7 +10,7 @@ import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    private static int uid;
+    private int uid;
 
     private final HashMap<Integer, Task> tasksHashMap = new HashMap<>();
     private final HashMap<Integer, Epic> epicsHashMap = new HashMap<>();
@@ -290,6 +290,10 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setSubtaskList(getEpicSubtaskList(epic.getId()));
         //проверка и изменение статуса при удалении сабтаска
         historyManager.remove(id);
+    }
+
+    @Override
+    public void save(String path) {
     }
 }
 

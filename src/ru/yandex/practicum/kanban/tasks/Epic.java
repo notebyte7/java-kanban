@@ -10,6 +10,7 @@ public class Epic extends Task {
 
     private final TaskType type = TaskType.EPIC;
 
+    @Override
     public TaskType getType() {
         return TaskType.EPIC;
     }
@@ -43,6 +44,7 @@ public class Epic extends Task {
         return subtaskIds;
     }
 
+    @Override
     public LocalDateTime getStartTime() {
         Optional<LocalDateTime> startTime = subtaskList.stream()
                 .filter(Objects::nonNull)
@@ -50,24 +52,29 @@ public class Epic extends Task {
                 .filter(Objects::nonNull)
                 .min(LocalDateTime::compareTo);
         if (startTime.isPresent()) {
+            setStartTime(startTime.get());
             return startTime.get();
         } else {
             return null;
         }
     }
 
+    @Override
     public int getDuration() {
         if (!subtaskList.isEmpty()) {
-            return subtaskList.stream()
+            int duration = subtaskList.stream()
                     .filter(Objects::nonNull)
                     .map(Subtask::getDuration)
                     .mapToInt(Integer::intValue)
                     .sum();
+            setDuration(duration);
+            return duration;
         } else {
             return 0;
         }
     }
 
+    @Override
     public LocalDateTime getEndTime() {
         Optional<LocalDateTime> endTime = subtaskList.stream()
                 .filter(Objects::nonNull)
@@ -78,6 +85,27 @@ public class Epic extends Task {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        Epic epic = (Epic) o;
+        return Objects.equals(subtaskIds, epic.subtaskIds) &&
+                Objects.equals(subtaskList, epic.subtaskList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), subtaskIds, subtaskList);
     }
 
     @Override

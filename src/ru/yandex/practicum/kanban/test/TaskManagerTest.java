@@ -1,7 +1,6 @@
-package ru.yandex.practicum.kanban.manager;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.kanban.manager.TaskManager;
 import ru.yandex.practicum.kanban.tasks.Epic;
 import ru.yandex.practicum.kanban.tasks.Subtask;
 import ru.yandex.practicum.kanban.tasks.Task;
@@ -16,6 +15,10 @@ import static ru.yandex.practicum.kanban.tasks.Status.*;
 public abstract class TaskManagerTest<T extends TaskManager> {
 
     private T taskManager;
+
+    public T getTaskManager() {
+        return taskManager;
+    }
 
     public TaskManagerTest(T taskManager) {
         this.taskManager = taskManager;
