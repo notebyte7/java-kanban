@@ -1,7 +1,7 @@
-package ru.yandex.practicum.kanban.manager;
+package manager;
 
-import ru.yandex.practicum.kanban.history.HistoryManager;
-import ru.yandex.practicum.kanban.tasks.*;
+import tasks.*;
+import history.*;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -47,6 +47,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                             for (Integer id : history) {
                                 manager.getHistoryManager().add(manager.tempTasksMap.get(id));
                             }
+                            break;
                         }
                     }
                 }

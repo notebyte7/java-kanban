@@ -1,6 +1,7 @@
-package ru.yandex.practicum.kanban.history;
+package history;
 
-import ru.yandex.practicum.kanban.tasks.Task;
+import history.HistoryManager;
+import tasks.Task;
 
 import java.util.*;
 

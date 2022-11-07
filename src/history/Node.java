@@ -1,4 +1,4 @@
-package ru.yandex.practicum.kanban.history;
+package history;
 
 class Node<Task> {
     public Task data;

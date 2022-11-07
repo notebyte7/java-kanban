@@ -1,4 +1,4 @@
-package ru.yandex.practicum.kanban.tasks;
+package tasks;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -109,7 +109,9 @@ public class Task {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Task task = (Task) o;
         return id == task.id && duration == task.duration && name.equals(task.name) &&
                 description.equals(task.description) && status == task.status &&

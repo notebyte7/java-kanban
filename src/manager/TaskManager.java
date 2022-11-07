@@ -1,7 +1,9 @@
-package ru.yandex.practicum.kanban.manager;
+package manager;
 
-
-import ru.yandex.practicum.kanban.tasks.*;
+import tasks.Epic;
+import tasks.Status;
+import tasks.Subtask;
+import tasks.Task;
 
 import java.util.List;
 import java.util.Set;

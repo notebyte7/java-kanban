@@ -1,4 +1,4 @@
-package ru.yandex.practicum.kanban.manager;
+package manager;
 
 import java.io.IOException;
 

@@ -1,16 +1,18 @@
+package test;
+
+import manager.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.kanban.manager.TaskManager;
-import ru.yandex.practicum.kanban.tasks.Epic;
-import ru.yandex.practicum.kanban.tasks.Subtask;
-import ru.yandex.practicum.kanban.tasks.Task;
+import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static ru.yandex.practicum.kanban.tasks.Status.*;
+import static tasks.Status.*;
 
 public abstract class TaskManagerTest<T extends TaskManager> {
 
@@ -54,7 +56,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 LocalDateTime.of(2022, 11, 1, 12, 00), 30);
         int taskId = taskManager.createTask(task);
 
-        Epic epic = new Epic("Test epic", "Test Epic description", NEW);
+        Epic epic = new Epic("Test epic", "Test tasks.Epic description", NEW);
         int epicId = taskManager.createEpic(epic);
 
         Subtask subtask = new Subtask("Test subtask", "Test subtask description", NEW,
@@ -110,7 +112,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 LocalDateTime.of(2022, 11, 1, 12, 00), 30);
         taskManager.createTask(task);
 
-        Epic epic = new Epic("Test epic", "Test Epic description", NEW);
+        Epic epic = new Epic("Test epic", "Test tasks.Epic description", NEW);
         int epicId = taskManager.createEpic(epic);
 
         Subtask subtask = new Subtask("Test subtask", "Test subtask description", NEW,
@@ -223,7 +225,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     // Для Эпиков
     @Test
     void createEpic() {
-        Epic epic = new Epic("Test Epic", "Test Epic description", NEW);
+        Epic epic = new Epic("Test tasks.Epic", "Test tasks.Epic description", NEW);
         final int epicId = taskManager.createEpic(epic);
 
         Epic savedEpic = taskManager.getEpic(epicId);
@@ -257,7 +259,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void removeAllEpics() {
-        Epic epic = new Epic("Test Epic", "Test Epic description", NEW);
+        Epic epic = new Epic("Test tasks.Epic", "Test tasks.Epic description", NEW);
         taskManager.createEpic(epic);
 
         final List<Epic> epics = taskManager.getEpicList();
@@ -345,9 +347,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     //Сабтаски
     @Test
     void createSubtask() {
-        Epic epic = new Epic("Test Epic", "Test Epic description", NEW);
+        Epic epic = new Epic("Test tasks.Epic", "Test tasks.Epic description", NEW);
         final int epicId = taskManager.createEpic(epic);
-        Subtask subtask = new Subtask("Test Subtask", "Test Subtask description", NEW, epicId);
+        Subtask subtask = new Subtask("Test tasks.Subtask", "Test tasks.Subtask description", NEW, epicId);
         final int subtaskId = taskManager.createSubtask(subtask);
 
         final Subtask savedSubtask = taskManager.getSubtask(subtaskId);
@@ -370,9 +372,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertNotNull(subtasks, "Список не найден");
         assertEquals(subtasks, new ArrayList<>(), "Вначале список не пустой");
 
-        Epic epic = new Epic("Test Epic", "Test Epic description", NEW);
+        Epic epic = new Epic("Test tasks.Epic", "Test tasks.Epic description", NEW);
         final int epicId = taskManager.createEpic(epic);
-        Subtask subtask = new Subtask("Test Subtask", "Test Subtask description", NEW, epicId);
+        Subtask subtask = new Subtask("Test tasks.Subtask", "Test tasks.Subtask description", NEW, epicId);
         taskManager.createSubtask(subtask);
 
         final List<Epic> subtask1 = taskManager.getEpicList();
@@ -384,10 +386,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void removeAllSubtasks() {
-        Epic epic = new Epic("Test Epic", "Test Epic description", NEW);
+        Epic epic = new Epic("Test tasks.Epic", "Test tasks.Epic description", NEW);
         final int epicId = taskManager.createEpic(epic);
 
-        Subtask subtask = new Subtask("Test Subtask", "Test Subtask description", NEW, epicId);
+        Subtask subtask = new Subtask("Test tasks.Subtask", "Test tasks.Subtask description", NEW, epicId);
         taskManager.createSubtask(subtask);
 
         final List<Subtask> subtasks = taskManager.getSubtaskList();
@@ -404,7 +406,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Epic epic = new Epic("Test addNewEpic", "Test addNewEpic description", NEW);
         final int epicId = taskManager.createEpic(epic);
 
-        Subtask subtask = new Subtask("Test Subtask", "Test Subtask description", NEW, epicId);
+        Subtask subtask = new Subtask("Test tasks.Subtask", "Test tasks.Subtask description", NEW, epicId);
         final int subtaskId = taskManager.createSubtask(subtask);
 
         final Subtask savedSubtask = taskManager.getSubtask(subtaskId);
@@ -423,14 +425,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         final int epicId = taskManager.createEpic(epic);
         Epic savedEpic = taskManager.getEpic(epicId);
 
-        Subtask subtask = new Subtask("Test Subtask", "Test Subtask description", NEW, epicId);
+        Subtask subtask = new Subtask("Test tasks.Subtask", "Test tasks.Subtask description", NEW, epicId);
         final int subtaskId = taskManager.createSubtask(subtask);
         final Subtask savedSubtask = taskManager.getSubtask(subtaskId);
 
         assertNotNull(savedSubtask, "Задача не найдена.");
         assertEquals(subtask, savedSubtask, "Задачи не совпадают.");
 
-        subtask = new Subtask("Test Subtask - change", "Test Subtask description - change",
+        subtask = new Subtask("Test tasks.Subtask - change", "Test tasks.Subtask description - change",
                 subtaskId, IN_PROGRESS, epicId);
         taskManager.updateSubtask(subtask);
         final Subtask savedSubtask1 = taskManager.getSubtask(subtaskId);
@@ -450,7 +452,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Epic epic = new Epic("Test addNewEpic", "Test addNewEpic description", NEW);
         final int epicId = taskManager.createEpic(epic);
 
-        Subtask subtask = new Subtask("Test Subtask", "Test Subtask description", NEW, epicId);
+        Subtask subtask = new Subtask("Test tasks.Subtask", "Test tasks.Subtask description", NEW, epicId);
         final int subtaskId = taskManager.createSubtask(subtask);
         final Subtask savedSubtask = taskManager.getSubtask(subtaskId);
 

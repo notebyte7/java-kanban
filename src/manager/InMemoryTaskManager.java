@@ -1,10 +1,10 @@
-package ru.yandex.practicum.kanban.manager;
+package manager;
 
-import ru.yandex.practicum.kanban.history.HistoryManager;
-import ru.yandex.practicum.kanban.tasks.Task;
-import ru.yandex.practicum.kanban.tasks.Epic;
-import ru.yandex.practicum.kanban.tasks.Subtask;
-import ru.yandex.practicum.kanban.tasks.Status;
+import history.HistoryManager;
+import tasks.Epic;
+import tasks.Status;
+import tasks.Subtask;
+import tasks.Task;
 
 import java.util.*;
 

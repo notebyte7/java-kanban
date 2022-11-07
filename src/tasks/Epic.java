@@ -1,4 +1,4 @@
-package ru.yandex.practicum.kanban.tasks;
+package tasks;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ public class Epic extends Task {
 
     @Override
     public TaskType getType() {
-        return TaskType.EPIC;
+        return type;
     }
 
     private final List<Integer> subtaskIds = new ArrayList<>();
