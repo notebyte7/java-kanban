@@ -38,9 +38,9 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
         getTaskManager().save("manager.csv");
 
         FileBackedTasksManager testManager = FileBackedTasksManager.loadFromFile(new File("manager.csv"));
-        assertEquals(testManager.getTaskList(), getTaskManager().getTaskList(), "таски не совпадают");
-        assertEquals(testManager.getEpicList(), getTaskManager().getEpicList(), "эпики не совпадают");
-        assertEquals(testManager.getSubtaskList(), getTaskManager().getSubtaskList(), "сабтаски не совпадают");
+        assertEquals(getTaskManager().getTaskList(), testManager.getTaskList(), "таски не совпадают");
+        assertEquals(getTaskManager().getEpicList(), testManager.getEpicList(), "эпики не совпадают");
+        assertEquals(getTaskManager().getSubtaskList(), testManager.getSubtaskList(), "сабтаски не совпадают");
 
     }
 
