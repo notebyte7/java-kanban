@@ -22,7 +22,6 @@ public class HTTPTaskManager extends FileBackedTasksManager {
     public HTTPTaskManager(String url) throws IOException {
         this.url = url;
         gson = new Gson();
-        //new KVServer().start();
     }
 
     public void save() {

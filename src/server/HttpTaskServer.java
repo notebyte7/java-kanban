@@ -78,7 +78,6 @@ public class HttpTaskServer {
                             }
                         } else if (path.equals("/tasks/task/")) {
                             if ((id != null) && taskManager.getTask(Integer.parseInt(id)) != null) {
-                                httpExchange.sendResponseHeaders(200, 0);
                                 String response = gson.toJson(taskManager.getTask(Integer.parseInt(id)));
                                 sendText(httpExchange, response);
                             } else {
@@ -86,7 +85,6 @@ public class HttpTaskServer {
                             }
                         } else if (path.equals("/tasks/epic/")) {
                             if ((id != null) && taskManager.getEpic(Integer.parseInt(id)) != null) {
-                                httpExchange.sendResponseHeaders(200, 0);
                                 String response = gson.toJson(taskManager.getEpic(Integer.parseInt(id)));
                                 sendText(httpExchange, response);
                             } else {
@@ -94,7 +92,6 @@ public class HttpTaskServer {
                             }
                         } else if (path.equals("/tasks/subtask/")) {
                             if ((id != null) && taskManager.getSubtask(Integer.parseInt(id)) != null) {
-                                httpExchange.sendResponseHeaders(200, 0);
                                 String response = gson.toJson(taskManager.getSubtask(Integer.parseInt(id)));
                                 sendText(httpExchange, response);
                             } else {
@@ -138,23 +135,18 @@ public class HttpTaskServer {
                     case "GET":
                         headers.set("Content-Type", "application/json");
                         if (path.equals("/tasks/")) {
-                            httpExchange.sendResponseHeaders(200, 0);
                             String response = gson.toJson(taskManager.getPrioritizedTasks());
                             sendText(httpExchange, response);
                         } else if (path.equals("/tasks/history/")) {
-                            httpExchange.sendResponseHeaders(200, 0);
                             String response = gson.toJson(taskManager.getHistory());
                             sendText(httpExchange, response);
                         } else if (path.equals("/tasks/task/")) {
-                            httpExchange.sendResponseHeaders(200, 0);
                             String response = gson.toJson(taskManager.getTaskList());
                             sendText(httpExchange, response);
                         } else if (path.equals("/tasks/epic/")) {
-                            httpExchange.sendResponseHeaders(200, 0);
                             String response = gson.toJson(taskManager.getEpicList());
                             sendText(httpExchange, response);
                         } else if (path.equals("/tasks/subtask/")) {
-                            httpExchange.sendResponseHeaders(200, 0);
                             String response = gson.toJson(taskManager.getSubtaskList());
                             sendText(httpExchange, response);
                         } else {

@@ -9,11 +9,11 @@ import server.KVServer;
 
 import java.io.IOException;
 
-class HTTPTaskManagerTest extends TaskManagerTest<TaskManager> {
+class HttpTaskManagerTest extends TaskManagerTest<TaskManager> {
     private HttpTaskServer taskServer;
     private KVServer kvServer = new KVServer();
 
-    public HTTPTaskManagerTest() throws IOException, CrossingTaskException {
+    public HttpTaskManagerTest() throws IOException, CrossingTaskException {
         super(Managers.getDefault());
     }
 
