@@ -1,5 +1,6 @@
 package test;
 
+import manager.CrossingTaskException;
 import manager.FileBackedTasksManager;
 import manager.TaskManager;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
     }
 
     @Test
-    void save() throws IOException {
+    void save() throws IOException, CrossingTaskException {
         Task task = new Task("Test addNewTask", "Test addNewTask description", NEW,
                 LocalDateTime.of(2022, 11, 1, 12, 00), 30);
         List<Task> tempTaskList = new ArrayList<>();
@@ -46,7 +47,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<TaskManager> {
 
 
     @Test
-    void loadFromFile() {
+    void loadFromFile() throws CrossingTaskException {
         Task task = new Task("Test addNewTask", "Test addNewTask description", 1, NEW,
                 LocalDateTime.of(2022, 11, 1, 12, 00), 30);
         final int taskId = getTaskManager().createTask(task);

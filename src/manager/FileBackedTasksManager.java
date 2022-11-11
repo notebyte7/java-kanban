@@ -7,11 +7,13 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.io.BufferedWriter;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final Map<Integer, Task> tempTasksMap = new HashMap<>();
+    private String url;
 
     public void save(String path) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
@@ -52,33 +54,45 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     }
                 }
             }
-        } catch (IOException e) {
-            throw new ManagerSaveException(e);
+        } catch (IOException | CrossingTaskException e) {
+            throw new ManagerSaveException();
         }
         return manager;
     }
 
-    private Task fromString(String line) {
+    private Task fromString(String line) throws CrossingTaskException {
         String[] value = line.split(",");
         Task task = null;
-
         switch (TaskType.valueOf(value[1])) {
             case TASK:
-                task = new Task(value[2], value[4], Integer.parseInt(value[0]), Status.valueOf(value[3]),
-                        LocalDateTime.parse(value[5]), Integer.parseInt(value[6]));
+                try {
+                    task = new Task(value[2], value[4], Integer.parseInt(value[0]), Status.valueOf(value[3]),
+                            LocalDateTime.parse(value[5]), Integer.parseInt(value[6]));
+                } catch (IndexOutOfBoundsException e) {
+                    task = new Task(value[2], value[4], Integer.parseInt(value[0]), Status.valueOf(value[3]));
+                }
                 super.createTask(task);
                 tempTasksMap.put(Integer.parseInt(value[0]), task);
                 return task;
             case EPIC:
-                task = new Epic(value[2], value[4], Integer.parseInt(value[0]), Status.valueOf(value[3]),
-                        LocalDateTime.parse(value[5]), Integer.parseInt(value[6]));
+                try {
+                    task = new Epic(value[2], value[4], Integer.parseInt(value[0]), Status.valueOf(value[3]),
+                            LocalDateTime.parse(value[5]), Integer.parseInt(value[6]));
+                } catch (IndexOutOfBoundsException e) {
+                    task = new Epic(value[2], value[4], Integer.parseInt(value[0]), Status.valueOf(value[3]));
+                }
                 super.createEpic((Epic) task);
                 tempTasksMap.put(Integer.parseInt(value[0]), task);
                 break;
             case SUBTASK:
-                task = new Subtask(value[2], value[4], Integer.parseInt(value[0]),
-                        Status.valueOf(value[3]), LocalDateTime.parse(value[5]), Integer.parseInt(value[6]),
-                        Integer.parseInt(value[7]));
+                try {
+                    task = new Subtask(value[2], value[4], Integer.parseInt(value[0]),
+                            Status.valueOf(value[3]), LocalDateTime.parse(value[5]), Integer.parseInt(value[6]),
+                            Integer.parseInt(value[7]));
+                } catch (IndexOutOfBoundsException | DateTimeParseException e) {
+                    task = new Subtask(value[2], value[4], Integer.parseInt(value[0]),
+                            Status.valueOf(value[3]), Integer.parseInt(value[7]));
+                }
                 super.createSubtask((Subtask) task);
                 tempTasksMap.put(Integer.parseInt(value[0]), task);
                 break;
@@ -113,7 +127,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     // Для тасков
     @Override
-    public int createTask(Task task) {  //создание Таска
+    public int createTask(Task task) throws CrossingTaskException {  //создание Таска
         final int id = super.createTask(task);
         save("manager.csv");
         return id;
@@ -141,7 +155,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
 
     @Override
-    public void updateTask(Task task) { //обновление задачи
+    public void updateTask(Task task) throws CrossingTaskException { //обновление задачи
         super.updateTask(task);
         save("manager.csv");
     }
@@ -199,7 +213,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     // Для Сабтасков
     @Override
-    public int createSubtask(Subtask subtask) { //создание Сабтаска
+    public int createSubtask(Subtask subtask) throws CrossingTaskException { //создание Сабтаска
         int id = super.createSubtask(subtask);
         save("manager.csv");
         return id;
@@ -225,7 +239,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
+    public void updateSubtask(Subtask subtask) throws CrossingTaskException {
         super.updateSubtask(subtask);
         save("manager.csv");
     }

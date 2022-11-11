@@ -1,6 +1,8 @@
 package test;
 
+import manager.CrossingTaskException;
 import manager.TaskManager;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
@@ -26,15 +28,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         this.taskManager = taskManager;
     }
 
-    @BeforeEach
-    void removeAllLists() {
-        taskManager.removeAllTasks();
-        taskManager.removeAllEpics();
-        taskManager.removeAllSubtasks();
-    }
-
     @Test
-    void createTask() {
+    void createTask() throws CrossingTaskException {
         Task task = new Task("Test addNewTask", "Test addNewTask description", NEW);
         final int taskId = taskManager.createTask(task);
 
@@ -51,7 +46,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void createTaskWithTime() {
+    void createTaskWithTime() throws CrossingTaskException {
         Task task = new Task("Test addNewTask", "Test addNewTask description", NEW,
                 LocalDateTime.of(2022, 11, 1, 12, 00), 30);
         int taskId = taskManager.createTask(task);
@@ -107,7 +102,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void checkCrossingTask() {
+    void checkCrossingTask() throws CrossingTaskException {
         Task task = new Task("Test addNewTask", "Test addNewTask description", NEW,
                 LocalDateTime.of(2022, 11, 1, 12, 00), 30);
         taskManager.createTask(task);
@@ -121,23 +116,41 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         task = new Task("Test addNewTask", "Test addNewTask description", NEW,
                 LocalDateTime.of(2022, 11, 1, 12, 00), 15);
-        taskManager.createTask(task);
+        Task finalTask = task;
+        CrossingTaskException thrown = Assertions
+                .assertThrows(CrossingTaskException.class, () -> {
+                    taskManager.createTask(finalTask);
+                }, "Пересекающиеся задачи");
+        Assertions.assertEquals(
+                "Задачи пересекаются!", thrown.getMessage());
 
         subtask = new Subtask("Test subtask", "Test subtask description", NEW,
                 LocalDateTime.of(2022, 11, 1, 13, 20), 10, epicId);
-        taskManager.createSubtask(subtask);
+
+        Subtask finalSubtask = subtask;
+        thrown = Assertions
+                .assertThrows(CrossingTaskException.class, () -> {
+                    taskManager.createSubtask(finalSubtask);
+                }, "Пересекающиеся задачи");
+        Assertions.assertEquals(
+                "Задачи пересекаются!", thrown.getMessage());
 
         task = new Task("Test addNewTask", "Test addNewTask description", NEW,
                 LocalDateTime.of(2022, 11, 1, 12, 00), 600);
-        taskManager.createTask(task);
+        Task finalTask1 = task;
+        thrown = Assertions
+                .assertThrows(CrossingTaskException.class, () -> {
+                    taskManager.createTask(finalTask1);
+                }, "Пересекающиеся задачи");
+        Assertions.assertEquals(
+                "Задачи пересекаются!", thrown.getMessage());
 
         task = new Task("Test addNewTask", "Test addNewTask description", NEW,
                 LocalDateTime.of(2022, 11, 1, 13, 30), 15);
-        taskManager.createTask(task);
     }
 
     @Test
-    void getTaskList() {
+    void getTaskList() throws CrossingTaskException {
         final List<Task> tasks = taskManager.getTaskList();
 
         assertNotNull(tasks, "Список не найден");
@@ -154,7 +167,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void removeAllTasks() {
+    void removeAllTasks() throws CrossingTaskException {
         Task task = new Task("Test addNewTask", "Test addNewTask description", NEW);
         taskManager.createTask(task);
 
@@ -168,7 +181,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getTask() {
+    void getTask() throws CrossingTaskException {
         Task task = new Task("Test addNewTask", "Test addNewTask description", NEW);
         final int taskId = taskManager.createTask(task);
 
@@ -177,13 +190,11 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertNotNull(savedTask, "Задача не найдена.");
         assertEquals(task, savedTask, "Задачи не совпадают.");
 
-        final NullPointerException exception = assertThrows(
-                NullPointerException.class, () -> taskManager.getTask(777), "вышло не то исключение");
-        assertEquals(null, exception.getMessage());
+        assertNull(taskManager.getTask(7777), "несуществующая задача");
     }
 
     @Test
-    void updateTask() {
+    void updateTask() throws CrossingTaskException {
         Task task = new Task("Test addNewTask", "Test addNewTask description", NEW);
         final int taskId = taskManager.createTask(task);
         Task savedTask = taskManager.getTask(taskId);
@@ -207,7 +218,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void removeTask() {
+    void removeTask() throws CrossingTaskException {
         Task task = new Task("Test addNewTask", "Test addNewTask description", NEW);
         final int taskId = taskManager.createTask(task);
         Task savedTask = taskManager.getTask(taskId);
@@ -216,10 +227,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(task, savedTask, "Задачи не совпадают.");
 
         taskManager.removeTask(taskId);
-        final NullPointerException exception = assertThrows(
-                NullPointerException.class, () -> taskManager.getTask(taskId), "задача не удалена/" +
-                        "вышло не то исключение");
-        assertEquals(null, exception.getMessage());
+        assertNull(taskManager.getTask(taskId), "несуществующая задача");
     }
 
     // Для Эпиков
@@ -281,9 +289,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertNotNull(savedEpic, "Задача не найдена.");
         assertEquals(epic, savedEpic, "Задачи не совпадают.");
 
-        final NullPointerException exception = assertThrows(
-                NullPointerException.class, () -> taskManager.getEpic(777), "вышло не то исключение");
-        assertEquals(null, exception.getMessage());
+        assertNull(taskManager.getEpic(7777), "несуществующая задача");
     }
 
     @Test
@@ -320,14 +326,11 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(epic, savedEpic, "Эпики не совпадают.");
 
         taskManager.removeEpic(epicId);
-        final NullPointerException exception = assertThrows(
-                NullPointerException.class, () -> taskManager.getEpic(epicId), "эпик не удален/" +
-                        "вышло не то исключение");
-        assertEquals(null, exception.getMessage());
+        assertNull(taskManager.getEpic(epicId), "несуществующая задача");
     }
 
     @Test
-    void getEpicSubtaskList() {
+    void getEpicSubtaskList() throws CrossingTaskException {
         Epic epic = new Epic("Test addNewEpic", "Test addNewEpic description", NEW);
         final int epicId = taskManager.createEpic(epic);
         assertEquals(taskManager.getEpicSubtaskList(epicId), new ArrayList<>(), "список subtaskIds не пустой");
@@ -339,14 +342,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(taskManager.getEpicSubtaskList(epicId), tempEpicSubtaskList,
                 "список subtaskIds не соответствует");
 
-        final NullPointerException exception = assertThrows(
-                NullPointerException.class, () -> taskManager.getEpicSubtaskList(7777), "вышло не то исключение");
-        assertEquals(null, exception.getMessage());
+        assertNull(taskManager.getEpicSubtaskList(7777), "несуществующая задача");
     }
 
     //Сабтаски
     @Test
-    void createSubtask() {
+    void createSubtask() throws CrossingTaskException {
         Epic epic = new Epic("Test tasks.Epic", "Test tasks.Epic description", NEW);
         final int epicId = taskManager.createEpic(epic);
         Subtask subtask = new Subtask("Test tasks.Subtask", "Test tasks.Subtask description", NEW, epicId);
@@ -365,7 +366,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getSubtaskList() {
+    void getSubtaskList() throws CrossingTaskException {
 
         final List<Subtask> subtasks = taskManager.getSubtaskList();
 
@@ -385,7 +386,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void removeAllSubtasks() {
+    void removeAllSubtasks() throws CrossingTaskException {
         Epic epic = new Epic("Test tasks.Epic", "Test tasks.Epic description", NEW);
         final int epicId = taskManager.createEpic(epic);
 
@@ -402,7 +403,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getSubtask() {
+    void getSubtask() throws CrossingTaskException {
         Epic epic = new Epic("Test addNewEpic", "Test addNewEpic description", NEW);
         final int epicId = taskManager.createEpic(epic);
 
@@ -414,13 +415,11 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertNotNull(savedSubtask, "Задача не найдена.");
         assertEquals(subtask, savedSubtask, "Задачи не совпадают.");
 
-        final NullPointerException exception = assertThrows(
-                NullPointerException.class, () -> taskManager.getSubtask(777), "вышло не то исключение");
-        assertEquals(null, exception.getMessage());
+        assertNull(taskManager.getSubtask(7777), "несуществующая задача");
     }
 
     @Test
-    void updateSubtask() {
+    void updateSubtask() throws CrossingTaskException {
         Epic epic = new Epic("Test addNewEpic", "Test addNewEpic description", NEW);
         final int epicId = taskManager.createEpic(epic);
         Epic savedEpic = taskManager.getEpic(epicId);
@@ -448,7 +447,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void removeSubtask() {
+    void removeSubtask() throws CrossingTaskException {
         Epic epic = new Epic("Test addNewEpic", "Test addNewEpic description", NEW);
         final int epicId = taskManager.createEpic(epic);
 
@@ -460,9 +459,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(subtask, savedSubtask, "Сабтаски не совпадают.");
 
         taskManager.removeSubtask(subtaskId);
-        final NullPointerException exception = assertThrows(
-                NullPointerException.class, () -> taskManager.getSubtask(subtaskId), "эпик не удален/" +
-                        "вышло не то исключение");
-        assertEquals(null, exception.getMessage());
+        assertNull(taskManager.getSubtask(subtaskId), "несуществующая задача");
     }
 }

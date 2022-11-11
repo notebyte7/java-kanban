@@ -20,12 +20,7 @@ public class InMemoryTaskManager implements TaskManager {
         @Override
         public int compare(Task o1, Task o2) {
             if ((o1.getStartTime() != null) && (o2.getStartTime() != null)) {
-                if (o1.getStartTime().equals(o2.getStartTime())) {
-                    return 1;
-                } else {
-                    return o1.getStartTime().compareTo(o2.getStartTime());
-                }
-
+                return o1.getStartTime().compareTo(o2.getStartTime());
             } else if (o1.getStartTime() != null) {
                 return -1;
             } else {
@@ -53,11 +48,13 @@ public class InMemoryTaskManager implements TaskManager {
     public boolean isCrossing(Task newTask) {
         if (newTask.getStartTime() != null) {
             for (Task prioritizedTask : getPrioritizedTasks()) {
-                if (!(newTask.getEndTime().isBefore(prioritizedTask.getStartTime()) ||
-                        (newTask.getEndTime().isEqual(prioritizedTask.getStartTime())) ||
-                        (newTask.getStartTime().isEqual(prioritizedTask.getEndTime())) ||
-                        (newTask.getStartTime().isAfter(prioritizedTask.getEndTime())))) {
-                    return true;
+                if (prioritizedTask.getStartTime() != null) {
+                    if (!(newTask.getEndTime().isBefore(prioritizedTask.getStartTime()) ||
+                            (newTask.getEndTime().isEqual(prioritizedTask.getStartTime())) ||
+                            (newTask.getStartTime().isEqual(prioritizedTask.getEndTime())) ||
+                            (newTask.getStartTime().isAfter(prioritizedTask.getEndTime())))) {
+                        return true;
+                    }
                 }
             }
         }
@@ -66,7 +63,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     // Для тасков
     @Override
-    public int createTask(Task task) {  //создание Таска
+    public int createTask(Task task) throws CrossingTaskException {  //создание Таска
         if (!isCrossing(task)) {
             final int id;
             if (task.getId() != 0) {
@@ -80,7 +77,7 @@ public class InMemoryTaskManager implements TaskManager {
             prioritizedTasks.add(task);
             return id;
         } else {
-            return 0;
+            throw new CrossingTaskException("Задачи пересекаются!");
         }
     }
 
@@ -104,21 +101,22 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateTask(Task task) { //обновление задачи
-        if (!isCrossing(task)) {
-            Task updateTask = tasksHashMap.get(task.getId());
-            tasksHashMap.put(task.getId(), task);
-            prioritizedTasks.remove(updateTask);
-            prioritizedTasks.add(task);
+    public void updateTask(Task task) throws CrossingTaskException { //обновление задачи
+        boolean isExist = getTaskList().stream()
+                .anyMatch(tempTask -> tempTask.getId() == task.getId());
+        if (isExist) {
+            removeTask(task.getId());
+            createTask(task);
         }
     }
 
     @Override
     public void removeTask(int id) { //удаление по идентификатору
         Task deleteTask = tasksHashMap.get(id);
+        prioritizedTasks.remove(deleteTask);
         tasksHashMap.remove(id);
         historyManager.remove(id);
-        prioritizedTasks.remove(deleteTask);
+
     }
 
     // Для Эпиков
@@ -164,24 +162,29 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeEpic(int id) { //удаление по идентификатору
-        ArrayList<Integer> subtasksId = new ArrayList<>(epicsHashMap.get(id).getSubtaskIds());
-        epicsHashMap.remove(id);
-        for (Integer subtaskId : subtasksId) {
-            subtasksHashMap.remove(subtaskId);
-            historyManager.remove(subtaskId);
-            //удаление всех сабтасков удаленного эпика
+        if (epicsHashMap.get(id).getSubtaskIds() != null) {
+            ArrayList<Integer> subtasksId = new ArrayList<>(epicsHashMap.get(id).getSubtaskIds());
+            for (Integer subtaskId : subtasksId) {
+                removeSubtask(subtaskId);
+                //удаление всех сабтасков удаленного эпика
+            }
         }
+        epicsHashMap.remove(id);
         historyManager.remove(id);
     }
 
     @Override
     public ArrayList<Subtask> getEpicSubtaskList(int id) {
         //получение списка всех подзадач определенного эпика
-        ArrayList<Subtask> thisEpicSubtaskList = new ArrayList<>();
-        for (Integer subtaskId : epicsHashMap.get(id).getSubtaskIds()) {
-            thisEpicSubtaskList.add(subtasksHashMap.get(subtaskId));
+        if (epicsHashMap.get(id) != null) {
+            ArrayList<Subtask> thisEpicSubtaskList = new ArrayList<>();
+            for (Integer subtaskId : epicsHashMap.get(id).getSubtaskIds()) {
+                thisEpicSubtaskList.add(subtasksHashMap.get(subtaskId));
+            }
+            return thisEpicSubtaskList;
+        } else {
+            return null;
         }
-        return thisEpicSubtaskList;
     }
 
     public Status getEpicStatus(int id) { //проверка и возврат статуса Эпика
@@ -217,7 +220,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     // Для Сабтасков
     @Override
-    public int createSubtask(Subtask subtask) { //создание Сабтаска
+    public int createSubtask(Subtask subtask) throws CrossingTaskException { //создание Сабтаска
         if (!isCrossing(subtask)) {
             final int id;
             if (subtask.getId() != 0) {
@@ -240,7 +243,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
             return id;
         } else {
-            return 0;
+            throw new CrossingTaskException("Задачи пересекаются!");
         }
 
     }
@@ -265,17 +268,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
-        if (!isCrossing(subtask)) {
-            Subtask updateSubtask = subtasksHashMap.get(subtask.getId());
-            subtasksHashMap.put(subtask.getId(), subtask);
-            prioritizedTasks.remove(updateSubtask);
-            prioritizedTasks.add(subtask);
-
-            Epic epic = epicsHashMap.get(subtask.getEpicId());
-            epic.setSubtaskList(getEpicSubtaskList(epic.getId()));
-            epic.setStatus(getEpicStatus(epic.getId()));
-            //проверка и изменение статуса при обновлении сабтаска
+    public void updateSubtask(Subtask subtask) throws CrossingTaskException {
+        boolean isExist = getSubtaskList().stream()
+                .anyMatch(tempSubtask -> tempSubtask.getId() == subtask.getId());
+        if (isExist) {
+            removeSubtask(subtask.getId());
+            createSubtask(subtask);
         }
     }
 

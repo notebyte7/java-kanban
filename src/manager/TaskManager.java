@@ -11,7 +11,7 @@ import java.util.Set;
 public interface TaskManager {
 
     // Для тасков
-    int createTask(Task task);
+    int createTask(Task task) throws CrossingTaskException;
 
     List<Task> getTaskList();
 
@@ -19,7 +19,7 @@ public interface TaskManager {
 
     Task getTask(int id);
 
-    void updateTask(Task task);
+    void updateTask(Task task) throws CrossingTaskException;
 
     void removeTask(int id);
 
@@ -42,7 +42,7 @@ public interface TaskManager {
 
 
     // Для Сабтасков
-    int createSubtask(Subtask subtask);
+    int createSubtask(Subtask subtask) throws CrossingTaskException;
 
     List<Subtask> getSubtaskList();
 
@@ -50,11 +50,13 @@ public interface TaskManager {
 
     Subtask getSubtask(int id);
 
-    void updateSubtask(Subtask subtask);
+    void updateSubtask(Subtask subtask) throws CrossingTaskException;
 
     void removeSubtask(int id);
 
     Set<Task> getPrioritizedTasks();
 
     void save(String path);
+
+    List<Task> getHistory();
 }

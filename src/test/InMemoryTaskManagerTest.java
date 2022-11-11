@@ -1,5 +1,6 @@
 package test;
 
+import manager.CrossingTaskException;
 import manager.InMemoryTaskManager;
 import manager.TaskManager;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<TaskManager> {
     }
 
     @Test
-    void getEpicStatus() {
+    void getEpicStatus() throws CrossingTaskException {
         Epic epic = new Epic("Test tasks.Epic", "Test tasks.Epic description", NEW);
         final int epicId = getTaskManager().createEpic(epic);
         assertEquals(getTaskManager().getEpicStatus(epicId), NEW, "Статусы не совпадают.");

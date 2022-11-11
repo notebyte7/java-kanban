@@ -46,14 +46,18 @@ public class Epic extends Task {
 
     @Override
     public LocalDateTime getStartTime() {
-        Optional<LocalDateTime> startTime = subtaskList.stream()
-                .filter(Objects::nonNull)
-                .map(Subtask::getStartTime)
-                .filter(Objects::nonNull)
-                .min(LocalDateTime::compareTo);
-        if (startTime.isPresent()) {
-            setStartTime(startTime.get());
-            return startTime.get();
+        if (subtaskList != null) {
+            Optional<LocalDateTime> startTime = subtaskList.stream()
+                    .filter(Objects::nonNull)
+                    .map(Subtask::getStartTime)
+                    .filter(Objects::nonNull)
+                    .min(LocalDateTime::compareTo);
+            if (startTime.isPresent()) {
+                setStartTime(startTime.get());
+                return startTime.get();
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
