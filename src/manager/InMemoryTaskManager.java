@@ -295,5 +295,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void save(String path) {
     }
+
+    @Override
+    public void load() throws CrossingTaskException {
+    }
 }
 

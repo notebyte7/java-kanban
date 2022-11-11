@@ -18,7 +18,7 @@ import static tasks.Status.*;
 
 public abstract class TaskManagerTest<T extends TaskManager> {
 
-    private T taskManager;
+    protected T taskManager;
 
     public T getTaskManager() {
         return taskManager;

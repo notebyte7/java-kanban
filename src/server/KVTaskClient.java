@@ -45,16 +45,18 @@ public class KVTaskClient {
     }
 
     public String load(String key) {
+        String response = null;
         try {
             request = HttpRequest.newBuilder()
                     .uri(URI.create(url + "load/" + key + "?API_TOKEN=" + apiToken))
                     .header("Accept", "application/json")
                     .GET()
                     .build();
-            return httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body();
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body();
+            return response;
         } catch (IOException | InterruptedException e) {
-            System.out.println("Не удалось загрузить данные");
-            throw new RuntimeException();
+            System.out.println("Данные пустые");
         }
+        return response;
     }
 }

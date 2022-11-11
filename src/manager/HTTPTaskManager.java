@@ -2,33 +2,31 @@ package manager;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import server.KVServer;
 import server.KVTaskClient;
 import tasks.*;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HTTPTaskManager extends FileBackedTasksManager {
-
-    private HashMap<Integer, Task> tasks = new HashMap<>();
-    private HashMap<Integer, Epic> epics = new HashMap<>();
-    private HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    private ArrayList<Task> history = new ArrayList<>();
     private String url;
     private Gson gson;
     private KVTaskClient kvTaskClient;
 
 
-    public HTTPTaskManager(String url) {
+    public HTTPTaskManager(String url) throws IOException {
         this.url = url;
         gson = new Gson();
-        kvTaskClient = new KVTaskClient(url);
+        //new KVServer().start();
     }
 
-
     public void save() {
+        kvTaskClient = new KVTaskClient(url);
         String jsonTasks = gson.toJson(getTaskList());
         kvTaskClient.put("tasks", jsonTasks);
 
@@ -43,20 +41,44 @@ public class HTTPTaskManager extends FileBackedTasksManager {
         kvTaskClient.put("history", jsonHistory);
     }
 
-    public void load() {
+    public void load() throws CrossingTaskException {
+        kvTaskClient = new KVTaskClient(url);
         String jsonTasks = kvTaskClient.load("tasks");
         String jsonSubtasks = kvTaskClient.load("subtasks");
         String jsonEpics = kvTaskClient.load("epics");
         String jsonHistory = kvTaskClient.load("history");
 
-        tasks = gson.fromJson(jsonTasks, new TypeToken<HashMap<Integer, Task>>() {
-        }.getType());
-        subtasks = gson.fromJson(jsonSubtasks, new TypeToken<HashMap<Integer, Subtask>>() {
-        }.getType());
-        epics = gson.fromJson(jsonEpics, new TypeToken<HashMap<Integer, Epic>>() {
-        }.getType());
-        history = gson.fromJson(jsonHistory, new TypeToken<ArrayList<Task>>() {
-        }.getType());
+        Type type = new TypeToken<ArrayList<Task>>() {
+        }.getType();
+        List<Task> tasks = gson.fromJson(jsonTasks, type);
+        List<Task> history = gson.fromJson(jsonHistory, type);
+        type = new TypeToken<ArrayList<Subtask>>() {
+        }.getType();
+        List<Subtask> subtasks = gson.fromJson(jsonSubtasks, type);
+        type = new TypeToken<ArrayList<Epic>>() {
+        }.getType();
+        List<Epic> epics = gson.fromJson(jsonEpics, type);
+
+        if (tasks != null) {
+            for (Task task : tasks) {
+                createTask(task);
+            }
+        }
+        if (epics != null) {
+            for (Epic epic : epics) {
+                createEpic(epic);
+            }
+        }
+        if (subtasks != null) {
+            for (Epic epic : epics) {
+                createEpic(epic);
+            }
+        }
+        if (history != null) {
+            for (Epic epic : epics) {
+                createEpic(epic);
+            }
+        }
     }
 
     @Override

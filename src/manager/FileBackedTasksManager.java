@@ -13,7 +13,6 @@ import java.io.BufferedWriter;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final Map<Integer, Task> tempTasksMap = new HashMap<>();
-    private String url;
 
     public void save(String path) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
