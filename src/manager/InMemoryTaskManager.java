@@ -293,15 +293,15 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
+    public void save() {
+    }
+
     public void save(String path) {
     }
 
     @Override
-    public void save() {
-    }
-
-    @Override
-    public void load() throws CrossingTaskException {
+    public FileBackedTasksManager load() throws CrossingTaskException {
+        return null;
     }
 }
 

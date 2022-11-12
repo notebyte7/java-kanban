@@ -58,9 +58,7 @@ class HttpTaskManagerTest extends FileBackedTasksManagerTest {
         assertEquals(taskManager.getTaskList(), testManager.getTaskList(), "таски не совпадают");
         assertEquals(taskManager.getEpicList(), testManager.getEpicList(), "эпики не совпадают");
         assertEquals(taskManager.getSubtaskList(), testManager.getSubtaskList(), "сабтаски не совпадают");
-
     }
-
 
     @Test
     void load() throws CrossingTaskException {
@@ -77,13 +75,13 @@ class HttpTaskManagerTest extends FileBackedTasksManagerTest {
         TaskManager testManager = getTaskManager();
         assertEquals(testManager.getTaskList().get(0), task, "таски не совпадают");
         assertEquals(testManager.getSubtaskList().get(0), subtask, "сабтаски не совпадают");
-        assertEquals(testManager.getEpicList().get(0), getTaskManager().getEpic(epicId), "'эпики не совпадают");
+        assertEquals(testManager.getEpicList().get(0), epic, "'эпики не совпадают");
         assertEquals(testManager.getHistory().size(), 0, "история не пуста");
 
-        taskManager.getTask(taskId);
-        taskManager.getEpic(epicId);
-        taskManager.getSubtask(subtaskId);
-        taskManager.save();
+        testManager.getTask(taskId);
+        testManager.getEpic(epicId);
+        testManager.getSubtask(subtaskId);
+        testManager.save();
 
         testManager.load();
         assertEquals(testManager.getHistory().get(0), task, "неправильная история");

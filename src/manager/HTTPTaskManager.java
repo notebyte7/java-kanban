@@ -40,7 +40,7 @@ public class HTTPTaskManager extends FileBackedTasksManager {
     }
 
     @Override
-    public void load() throws CrossingTaskException {
+    public HTTPTaskManager load() throws CrossingTaskException {
         kvTaskClient = new KVTaskClient(url);
         String jsonTasks = kvTaskClient.load("tasks");
         String jsonSubtasks = kvTaskClient.load("subtasks");
@@ -65,6 +65,8 @@ public class HTTPTaskManager extends FileBackedTasksManager {
         }
         if (epics != null) {
             for (Epic epic : epics) {
+                epic.getSubtaskIds().clear();
+                epic.getSubtaskList().clear();
                 createEpic(epic);
             }
         }
@@ -78,5 +80,6 @@ public class HTTPTaskManager extends FileBackedTasksManager {
                 getHistoryManager().add(task);
             }
         }
+        return null;
     }
 }

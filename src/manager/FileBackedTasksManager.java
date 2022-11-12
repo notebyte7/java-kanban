@@ -13,9 +13,11 @@ import java.io.BufferedWriter;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final String path;
+    private final File file;
 
     public FileBackedTasksManager() {
         this.path = "manager.csv";
+        this.file = new File("manager.csv");
     }
 
     private final Map<Integer, Task> tempTasksMap = new HashMap<>();
@@ -38,7 +40,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    public static FileBackedTasksManager loadFromFile(File file) throws ManagerSaveException {
+    public FileBackedTasksManager load() throws ManagerSaveException, CrossingTaskException {
         FileBackedTasksManager manager = new FileBackedTasksManager();
         List<String> lines;
         try {

@@ -62,5 +62,5 @@ public interface TaskManager {
 
     List<Task> getHistory();
 
-    void load() throws CrossingTaskException;
+    FileBackedTasksManager load() throws CrossingTaskException;
 }

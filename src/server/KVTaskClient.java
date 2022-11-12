@@ -9,17 +9,17 @@ import java.net.http.HttpResponse;
 public class KVTaskClient {
 
 
-    private final String url;
+    private final String path;
     private String apiToken;
 
     HttpClient httpClient = HttpClient.newHttpClient();
     HttpRequest request;
 
-    public KVTaskClient(String url) {
-        this.url = url;
+    public KVTaskClient(String path) {
+        this.path = path;
         try {
             request = HttpRequest.newBuilder()
-                    .uri(URI.create(url + "register/"))
+                    .uri(URI.create(path + "register/"))
                     .header("Accept", "application/json")
                     .GET()
                     .build();
@@ -33,7 +33,7 @@ public class KVTaskClient {
     public void put(String key, String json) {
         try {
             request = HttpRequest.newBuilder()
-                    .uri(URI.create(url + "save/" + key + "?API_TOKEN=" + apiToken))
+                    .uri(URI.create(path + "save/" + key + "?API_TOKEN=" + apiToken))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(json))
                     .build();
@@ -48,7 +48,7 @@ public class KVTaskClient {
         String response = null;
         try {
             request = HttpRequest.newBuilder()
-                    .uri(URI.create(url + "load/" + key + "?API_TOKEN=" + apiToken))
+                    .uri(URI.create(path + "load/" + key + "?API_TOKEN=" + apiToken))
                     .header("Accept", "application/json")
                     .GET()
                     .build();
