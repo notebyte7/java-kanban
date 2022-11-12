@@ -58,6 +58,8 @@ public interface TaskManager {
 
     void save(String path);
 
+    void save();
+
     List<Task> getHistory();
 
     void load() throws CrossingTaskException;

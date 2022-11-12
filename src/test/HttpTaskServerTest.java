@@ -27,12 +27,12 @@ import static tasks.Status.*;
 
 
 class HttpTaskServerTest {
-    TaskManager taskManager;
-    HttpTaskServer taskServer;
-    Gson gson;
-    Task defaultTask;
-    Epic defaultEpic;
-    Subtask defaultSubtask;
+    private final TaskManager taskManager;
+    private final HttpTaskServer taskServer;
+    private final Gson gson;
+    private Task defaultTask;
+    private Epic defaultEpic;
+    private Subtask defaultSubtask;
 
     KVServer kvServer;
 
@@ -44,7 +44,7 @@ class HttpTaskServerTest {
     }
 
     @BeforeEach
-    void startServer() throws IOException, CrossingTaskException {
+    void startServer() throws CrossingTaskException {
         kvServer.start();
         defaultTask = new Task("Test addNewTask", "Test addNewTask description", 1, NEW,
                 LocalDateTime.of(2022, 11, 1, 12, 00), 30);
@@ -68,7 +68,7 @@ class HttpTaskServerTest {
     @Test
     void getAllTasks() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/tasks/task/");
+        URI url = URI.create("http://localhost:" + HttpTaskServer.PORT + "/tasks/task/");
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 

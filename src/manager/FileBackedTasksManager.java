@@ -12,9 +12,15 @@ import java.util.*;
 import java.io.BufferedWriter;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
+    private final String path;
+
+    public FileBackedTasksManager() {
+        this.path = "manager.csv";
+    }
+
     private final Map<Integer, Task> tempTasksMap = new HashMap<>();
 
-    public void save(String path) {
+    public void save() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
             writer.write("id,type,name,status,description,startTime,duration,epic");
             for (Task task : getTaskList()) {
@@ -128,7 +134,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public int createTask(Task task) throws CrossingTaskException {  //создание Таска
         final int id = super.createTask(task);
-        save("manager.csv");
+        save();
         return id;
     }
 
@@ -141,14 +147,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public void removeAllTasks() { //удаление всех задач
         super.removeAllTasks();
-        save("manager.csv");
+        save();
     }
 
 
     @Override
     public Task getTask(int id) { //получение по идентификатору
         Task task = super.getTask(id);
-        save("manager.csv");
+        save();
         return task;
     }
 
@@ -156,20 +162,20 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public void updateTask(Task task) throws CrossingTaskException { //обновление задачи
         super.updateTask(task);
-        save("manager.csv");
+        save();
     }
 
     @Override
     public void removeTask(int id) { //удаление по идентификатору
         super.removeTask(id);
-        save("manager.csv");
+        save();
     }
 
     // Для Эпиков
     @Override
     public int createEpic(Epic epic) { //создание Эпика
         int id = super.createEpic(epic);
-        save("manager.csv");
+        save();
         return id;
     }
 
@@ -182,26 +188,26 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public void removeAllEpics() { //удаление всех эпиков
         super.removeAllEpics();
-        save("manager.csv");
+        save();
     }
 
     @Override
     public Epic getEpic(int id) { //получение по идентификатору
         Epic epic = super.getEpic(id);
-        save("manager.csv");
+        save();
         return epic;
     }
 
     @Override
     public void updateEpic(Epic epic) { //обновление эпика
         super.updateEpic(epic);
-        save("manager.csv");
+        save();
     }
 
     @Override
     public void removeEpic(int id) { //удаление по идентификатору
         super.removeEpic(id);
-        save("manager.csv");
+        save();
     }
 
     @Override
@@ -214,7 +220,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public int createSubtask(Subtask subtask) throws CrossingTaskException { //создание Сабтаска
         int id = super.createSubtask(subtask);
-        save("manager.csv");
+        save();
         return id;
     }
 
@@ -227,25 +233,25 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public void removeAllSubtasks() {
         super.removeAllSubtasks();
-        save("manager.csv");
+        save();
     }
 
     @Override
     public Subtask getSubtask(int id) {
         Subtask subtask = super.getSubtask(id);
-        save("manager.csv");
+        save();
         return subtask;
     }
 
     @Override
     public void updateSubtask(Subtask subtask) throws CrossingTaskException {
         super.updateSubtask(subtask);
-        save("manager.csv");
+        save();
     }
 
     @Override
     public void removeSubtask(int id) {
         super.removeSubtask(id);
-        save("manager.csv");
+        save();
     }
 }

@@ -26,7 +26,7 @@ public class KVTaskClient {
             this.apiToken = httpClient.send(request, HttpResponse.BodyHandlers.ofString()).body();
         } catch (IOException | InterruptedException e) {
             System.out.println("Во время регистрации произошла ошибка");
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 

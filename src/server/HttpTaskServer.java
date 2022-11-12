@@ -19,9 +19,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 
 public class HttpTaskServer {
-    private TaskManager taskManager;
-    private HttpServer httpServer;
-    private static final int PORT = 8080;
+    private final TaskManager taskManager;
+    private final HttpServer httpServer;
+    public static final int PORT = 8080;
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static Gson gson;
 
@@ -44,10 +44,6 @@ public class HttpTaskServer {
         System.out.println("HTTP-сервер остановлен на " + PORT + " порту!");
     }
 
-    private String readText(HttpExchange h) throws IOException {
-        return new String(h.getRequestBody().readAllBytes(), UTF_8);
-    }
-
     private void sendText(HttpExchange h, String text) throws IOException {
         byte[] resp = text.getBytes(UTF_8);
         h.getResponseHeaders().add("Content-Type", "application/json");
@@ -57,42 +53,42 @@ public class HttpTaskServer {
 
     private void handleTasks(HttpExchange httpExchange) throws IOException {
         try {
-            String id = null;
+            int id = 0;
             String method = httpExchange.getRequestMethod();
             String path = httpExchange.getRequestURI().getPath();
             Headers headers = httpExchange.getResponseHeaders();
             if (httpExchange.getRequestURI().getQuery() != null) {
                 String[] str = httpExchange.getRequestURI().getQuery().split("=");
                 if (str.length == 2) {
-                    id = str[1];
+                    id = Integer.parseInt(str[1]);
                 }
                 switch (method) {
                     case "GET":
                         headers.set("Content-Type", "application/json");
                         if (path.equals("/tasks/subtask/epic/")) {
-                            if ((id != null) && (taskManager.getEpicSubtaskList(Integer.parseInt(id)) != null)) {
-                                String response = gson.toJson(taskManager.getEpicSubtaskList(Integer.parseInt(id)));
+                            if (id != 0 && taskManager.getEpicSubtaskList(id) != null) {
+                                String response = gson.toJson(taskManager.getEpicSubtaskList(id));
                                 sendText(httpExchange, response);
                             } else {
                                 httpExchange.sendResponseHeaders(404, 0);
                             }
                         } else if (path.equals("/tasks/task/")) {
-                            if ((id != null) && taskManager.getTask(Integer.parseInt(id)) != null) {
-                                String response = gson.toJson(taskManager.getTask(Integer.parseInt(id)));
+                            if ((id != 0) && taskManager.getTask(id) != null) {
+                                String response = gson.toJson(taskManager.getTask(id));
                                 sendText(httpExchange, response);
                             } else {
                                 httpExchange.sendResponseHeaders(404, 0);
                             }
                         } else if (path.equals("/tasks/epic/")) {
-                            if ((id != null) && taskManager.getEpic(Integer.parseInt(id)) != null) {
-                                String response = gson.toJson(taskManager.getEpic(Integer.parseInt(id)));
+                            if ((id != 0) && taskManager.getEpic(id) != null) {
+                                String response = gson.toJson(taskManager.getEpic(id));
                                 sendText(httpExchange, response);
                             } else {
                                 httpExchange.sendResponseHeaders(404, 0);
                             }
                         } else if (path.equals("/tasks/subtask/")) {
-                            if ((id != null) && taskManager.getSubtask(Integer.parseInt(id)) != null) {
-                                String response = gson.toJson(taskManager.getSubtask(Integer.parseInt(id)));
+                            if ((id != 0) && taskManager.getSubtask(id) != null) {
+                                String response = gson.toJson(taskManager.getSubtask(id));
                                 sendText(httpExchange, response);
                             } else {
                                 httpExchange.sendResponseHeaders(404, 0);
@@ -103,22 +99,22 @@ public class HttpTaskServer {
                         break;
                     case "DELETE":
                         if (path.equals("/tasks/task/")) {
-                            if ((id != null) && taskManager.getTask(Integer.parseInt(id)) != null) {
-                                taskManager.removeTask(Integer.parseInt(id));
+                            if ((id != 0) && taskManager.getTask(id) != null) {
+                                taskManager.removeTask(id);
                                 httpExchange.sendResponseHeaders(204, 0);
                             } else {
                                 httpExchange.sendResponseHeaders(404, 0);
                             }
                         } else if (path.equals("/tasks/epic/")) {
-                            if ((id != null) && taskManager.getEpic(Integer.parseInt(id)) != null) {
-                                taskManager.removeEpic(Integer.parseInt(id));
+                            if ((id != 0) && taskManager.getEpic(id) != null) {
+                                taskManager.removeEpic(id);
                                 httpExchange.sendResponseHeaders(204, 0);
                             } else {
                                 httpExchange.sendResponseHeaders(404, 0);
                             }
                         } else if (path.equals("/tasks/subtask/")) {
-                            if ((id != null) && taskManager.getSubtask(Integer.parseInt(id)) != null) {
-                                taskManager.removeSubtask(Integer.parseInt(id));
+                            if ((id != 0) && taskManager.getSubtask(id) != null) {
+                                taskManager.removeSubtask(id);
                                 httpExchange.sendResponseHeaders(204, 0);
                             } else {
                                 httpExchange.sendResponseHeaders(404, 0);
@@ -165,14 +161,14 @@ public class HttpTaskServer {
                                     taskManager.updateTask(newTask);
                                     httpExchange.sendResponseHeaders(204, 0);
                                 } catch (CrossingTaskException e) {
-                                    httpExchange.sendResponseHeaders(400, 0);
+                                    httpExchange.sendResponseHeaders(422, 0);
                                 }
                             } else {
                                 try {
                                     taskManager.createTask(newTask);
                                     httpExchange.sendResponseHeaders(201, 0);
                                 } catch (CrossingTaskException e) {
-                                    httpExchange.sendResponseHeaders(400, 0);
+                                    httpExchange.sendResponseHeaders(422, 0);
                                 }
                             }
                         } else if (path.equals("/tasks/epic/")) {
@@ -195,14 +191,14 @@ public class HttpTaskServer {
                                     taskManager.updateSubtask(newSubtask);
                                     httpExchange.sendResponseHeaders(204, 0);
                                 } catch (CrossingTaskException e) {
-                                    httpExchange.sendResponseHeaders(400, 0);
+                                    httpExchange.sendResponseHeaders(422, 0);
                                 }
                             } else {
                                 try {
                                     taskManager.createSubtask(newSubtask);
                                     httpExchange.sendResponseHeaders(201, 0);
                                 } catch (CrossingTaskException e) {
-                                    httpExchange.sendResponseHeaders(400, 0);
+                                    httpExchange.sendResponseHeaders(422, 0);
                                 }
                             }
                         } else {
@@ -229,6 +225,7 @@ public class HttpTaskServer {
             }
         } catch (Exception exception) {
             System.out.println("Сервер упал");
+            throw exception;
         } finally {
             httpExchange.close();
         }
