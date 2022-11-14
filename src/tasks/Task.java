@@ -8,12 +8,14 @@ public class Task {
     private final String description;
     private int id = 0;
     private Status status;
+    protected TaskType type = TaskType.TASK;
 
     private LocalDateTime startTime = null;
     private int duration;
 
+
     public TaskType getType() {
-        return TaskType.TASK;
+        return type;
     }
 
     public String getName() {

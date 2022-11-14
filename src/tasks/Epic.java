@@ -8,7 +8,6 @@ import java.util.Optional;
 
 public class Epic extends Task {
 
-    private final TaskType type = TaskType.EPIC;
 
     @Override
     public TaskType getType() {
@@ -29,14 +28,17 @@ public class Epic extends Task {
 
     public Epic(String name, String description, Status status) {
         super(name, description, status);
+        this.type = TaskType.EPIC;
     }
 
     public Epic(String name, String description, int id, Status status) {
         super(name, description, id, status);
+        this.type = TaskType.EPIC;
     }
 
     public Epic(String name, String description, int id, Status status, LocalDateTime startTime, int duration) {
         super(name, description, id, status, startTime, duration);
+        this.type = TaskType.EPIC;
 
     }
 

@@ -6,6 +6,7 @@ import tasks.Status;
 import tasks.Subtask;
 import tasks.Task;
 
+import java.io.IOException;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -300,7 +301,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public FileBackedTasksManager load() throws CrossingTaskException {
+    public FileBackedTasksManager load() throws CrossingTaskException, IOException {
         return null;
     }
 }

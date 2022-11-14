@@ -19,10 +19,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     protected T taskManager;
 
-    public T getTaskManager() {
-        return taskManager;
-    }
-
     public TaskManagerTest(T taskManager) {
         this.taskManager = taskManager;
     }

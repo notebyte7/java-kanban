@@ -5,7 +5,6 @@ import java.util.Objects;
 
 public class Subtask extends Task {
     private final int epicId;
-    private final TaskType type = TaskType.SUBTASK;
 
     @Override
     public TaskType getType() {
@@ -19,23 +18,27 @@ public class Subtask extends Task {
     public Subtask(String name, String description, Status status, int epicId) {
         super(name, description, status);
         this.epicId = epicId;
+        this.type = TaskType.SUBTASK;
     }
 
     public Subtask(String name, String description, int id, Status status, int epicId) {
         super(name, description, id, status);
         this.epicId = epicId;
+        this.type = TaskType.SUBTASK;
     }
 
     public Subtask(String name, String description, Status status, LocalDateTime startTime, int duration,
                    int epicId) {
         super(name, description, status, startTime, duration);
         this.epicId = epicId;
+        this.type = TaskType.SUBTASK;
     }
 
     public Subtask(String name, String description, int id, Status status, LocalDateTime startTime, int duration,
                    int epicId) {
         super(name, description, id, status, startTime, duration);
         this.epicId = epicId;
+        this.type = TaskType.SUBTASK;
     }
 
     @Override
@@ -59,10 +62,10 @@ public class Subtask extends Task {
     @Override
     public String toString() {
         if (getStartTime() != null) {
-            return getId() + "," + type + "," + getName() + "," + getStatus() +
+            return getId() + "," + getType() + "," + getName() + "," + getStatus() +
                     "," + getDescription() + "," + getStartTime() + "," + getDuration() + "," + getEpicId();
         } else {
-            return getId() + "," + type + "," + getName() + "," + getStatus() +
+            return getId() + "," + getType() + "," + getName() + "," + getStatus() +
                     "," + getDescription() + "," + "," + "," + getEpicId();
         }
     }

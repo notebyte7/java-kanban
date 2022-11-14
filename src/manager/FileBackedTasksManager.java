@@ -40,7 +40,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    public FileBackedTasksManager load() throws ManagerSaveException, CrossingTaskException {
+    public FileBackedTasksManager load() throws ManagerSaveException, CrossingTaskException, IOException {
         FileBackedTasksManager manager = new FileBackedTasksManager();
         List<String> lines;
         try {

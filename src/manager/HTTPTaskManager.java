@@ -40,23 +40,28 @@ public class HTTPTaskManager extends FileBackedTasksManager {
     }
 
     @Override
-    public HTTPTaskManager load() throws CrossingTaskException {
+    public HTTPTaskManager load() throws CrossingTaskException, IOException {
         kvTaskClient = new KVTaskClient(url);
         String jsonTasks = kvTaskClient.load("tasks");
         String jsonSubtasks = kvTaskClient.load("subtasks");
         String jsonEpics = kvTaskClient.load("epics");
         String jsonHistory = kvTaskClient.load("history");
 
+
         Type type = new TypeToken<ArrayList<Task>>() {
         }.getType();
         List<Task> tasks = gson.fromJson(jsonTasks, type);
-        List<Task> history = gson.fromJson(jsonHistory, type);
+
         type = new TypeToken<ArrayList<Subtask>>() {
         }.getType();
         List<Subtask> subtasks = gson.fromJson(jsonSubtasks, type);
         type = new TypeToken<ArrayList<Epic>>() {
         }.getType();
         List<Epic> epics = gson.fromJson(jsonEpics, type);
+
+        type = new TypeToken<ArrayList<Task>>() {
+        }.getType();
+        ArrayList<Task> history = gson.fromJson(jsonHistory, type);
 
         if (tasks != null) {
             for (Task task : tasks) {

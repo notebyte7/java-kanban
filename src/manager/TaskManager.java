@@ -5,6 +5,7 @@ import tasks.Status;
 import tasks.Subtask;
 import tasks.Task;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -62,5 +63,5 @@ public interface TaskManager {
 
     List<Task> getHistory();
 
-    FileBackedTasksManager load() throws CrossingTaskException;
+    FileBackedTasksManager load() throws CrossingTaskException, IOException;
 }

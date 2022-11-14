@@ -27,6 +27,12 @@ class HttpTaskManagerTest extends FileBackedTasksManagerTest {
         kvServer = new KVServer();
     }
 
+    @Override
+    protected TaskManager loadManager() throws IOException {
+        TaskManager manager = Managers.getDefault();
+        return manager;
+    }
+
     @BeforeEach
     void setUp() throws IOException {
         kvServer.start();
@@ -60,31 +66,33 @@ class HttpTaskManagerTest extends FileBackedTasksManagerTest {
     }
 
     @Test
-    void load() throws CrossingTaskException {
+    void load() throws CrossingTaskException, IOException {
         Task task = new Task("Test addNewTask", "Test addNewTask description", 1, NEW,
                 LocalDateTime.of(2022, 11, 1, 12, 00), 30);
-        final int taskId = getTaskManager().createTask(task);
+        final int taskId = taskManager.createTask(task);
         Epic epic = new Epic("Test epic", "Test tasks.Epic description", 2, NEW);
-        int epicId = getTaskManager().createEpic(epic);
+        int epicId = taskManager.createEpic(epic);
         Subtask subtask = new Subtask("Test subtask", "Test subtask description", 3, NEW,
                 LocalDateTime.of(2022, 11, 1, 13, 00), 30, epicId);
-        final int subtaskId = getTaskManager().createSubtask(subtask);
+        final int subtaskId = taskManager.createSubtask(subtask);
         taskManager.save();
 
-        TaskManager testManager = getTaskManager();
+        TaskManager testManager = loadManager();
+        testManager.load();
         assertEquals(testManager.getTaskList().get(0), task, "таски не совпадают");
         assertEquals(testManager.getSubtaskList().get(0), subtask, "сабтаски не совпадают");
         assertEquals(testManager.getEpicList().get(0), epic, "'эпики не совпадают");
         assertEquals(testManager.getHistory().size(), 0, "история не пуста");
 
-        testManager.getTask(taskId);
-        testManager.getEpic(epicId);
-        testManager.getSubtask(subtaskId);
-        testManager.save();
+        taskManager.getTask(taskId);
+        taskManager.getEpic(epicId);
+        taskManager.getSubtask(subtaskId);
+        taskManager.save();
 
+        testManager = loadManager();
         testManager.load();
-        assertEquals(testManager.getHistory().get(0), task, "неправильная история");
-        assertEquals(testManager.getHistory().get(1), epic, "неправильная история");
-        assertEquals(testManager.getHistory().get(2), subtask, "неправильная история");
+        assertEquals(testManager.getHistory().get(0), taskManager.getHistory().get(0), "неправильная история");
+        assertEquals(testManager.getHistory().get(1), taskManager.getHistory().get(1), "неправильная история");
+        assertEquals(testManager.getHistory().get(2), taskManager.getHistory().get(2), "неправильная история");
     }
 }
