@@ -20,7 +20,6 @@ import static tasks.Status.NEW;
 
 class HttpTaskManagerTest extends FileBackedTasksManagerTest {
     private HttpTaskServer taskServer;
-    private final TaskManager taskManager;
     private final KVServer kvServer;
 
     public HttpTaskManagerTest() throws IOException {
