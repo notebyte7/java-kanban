@@ -34,8 +34,11 @@ public class HTTPTaskManager extends FileBackedTasksManager {
         String jsonSubtasks = gson.toJson(getSubtaskList());
         kvTaskClient.put("subtasks", jsonSubtasks);
 
-        String jsonHistory = gson.toJson(getHistory(), new TypeToken<ArrayList<Task>>() {
-        }.getType());
+        ArrayList<Integer> history = new ArrayList<>();
+        for (Task task : getHistory()) {
+            history.add(task.getId());
+        }
+        String jsonHistory = gson.toJson(history);
         kvTaskClient.put("history", jsonHistory);
     }
 
@@ -59,9 +62,8 @@ public class HTTPTaskManager extends FileBackedTasksManager {
         }.getType();
         List<Epic> epics = gson.fromJson(jsonEpics, type);
 
-        type = new TypeToken<ArrayList<Task>>() {
-        }.getType();
-        ArrayList<Task> history = gson.fromJson(jsonHistory, type);
+        ArrayList<Integer> history = gson.fromJson(jsonHistory, new TypeToken<ArrayList<Integer>>() {
+        }.getType());
 
         if (tasks != null) {
             for (Task task : tasks) {
@@ -81,8 +83,14 @@ public class HTTPTaskManager extends FileBackedTasksManager {
             }
         }
         if (history != null) {
-            for (Task task : history) {
-                getHistoryManager().add(task);
+            for (Integer id : history) {
+                if (getTaskList().stream().anyMatch(task -> task.getId() == id)) {
+                    getTask(id);
+                } else if (getEpicList().stream().anyMatch(epic -> epic.getId() == id)) {
+                    getEpic(id);
+                } else if (getSubtaskList().stream().anyMatch(subtask -> subtask.getId() == id)) {
+                    getSubtask(id);
+                }
             }
         }
         return null;
